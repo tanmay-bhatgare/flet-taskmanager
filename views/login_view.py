@@ -1,12 +1,51 @@
 import flet as ft
-from constants.constants import WidgetStyle, Pallet
+
+# * custom imports
+from constants.constants import WidgetStyle, Pallet, Urls
+from controllers.controllers import LoginController
+from models.models import LoginModel
 
 
 class LoginView(ft.UserControl):
     def __init__(self, page: ft.Page) -> None:
         super().__init__()
         self.page = page
+        self.controller = LoginController(url=Urls.login_url)
         self.__card_width_to_page_ratio = 0.5
+
+    async def on_login_click(self, e):
+        # settiing every field to disabled
+        self.form_card.disabled = True
+        self.update()
+
+        print("Login Function Triggred!!!")
+
+        # ? Stroing email and password
+        email = self.email_field.value
+        password = self.password_field.value
+
+        try:
+            await self.controller.login(
+                data=LoginModel(
+                    username=email,
+                    password=password,
+                )
+            )
+
+            if self.controller.is_logged_in:
+                # ? Setting controller's username variable to email
+                self.controller.username = self.email_field.value
+
+                # ? setting every field to enabled
+                self.form_card.disabled = False
+                self.update()
+
+                print("Login Successful")
+        except Exception:
+            self.form_card.disabled = False
+            self.update()
+
+            print("Something went wrong!")
 
     def build(self):
         # Email and password fields
@@ -38,9 +77,18 @@ class LoginView(ft.UserControl):
             color=Pallet.light_text_color,
             border_color="white",
         )
+        self.login_button = ft.ElevatedButton(
+            text="Log In",
+            style=WidgetStyle.action_button(
+                text_color="#242524",
+                weight=ft.FontWeight.W_700,
+                bgcolor=ft.colors.GREY_400,
+            ),
+            on_click=self.on_login_click,
+        )
 
-        return ft.Card(
-            color=Pallet.violet,
+        self.form_card = ft.Card(
+            color=Pallet.royal_purple,
             width=self.page.width * self.__card_width_to_page_ratio,
             height=self.page.height * 0.55,
             elevation=8,
@@ -90,16 +138,10 @@ class LoginView(ft.UserControl):
                             ],
                         ),
                     ),
-                    ft.ElevatedButton(
-                        text="Log In",
-                        style=WidgetStyle.action_button(
-                            text_color="#242524",
-                            weight=ft.FontWeight.W_700,
-                            bgcolor=ft.colors.GREY_400
-                        ),
-                        on_click=lambda _: print("Log In Clicked"),
-                    ),
+                    self.login_button,
                 ],
             ),
             shadow_color=ft.colors.SURFACE_VARIANT,
         )
+
+        return self.form_card
