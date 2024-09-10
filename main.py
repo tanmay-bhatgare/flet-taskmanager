@@ -1,11 +1,40 @@
+import warnings
 import flet as ft
-from views.login_view import LoginView
+from utils.view_handler import view_handler
+
+warnings.filterwarnings("ignore")
 
 
 def main(page: ft.Page):
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.add(LoginView(page=page))
+
+    history = []
+
+    def route_change(event: ft.RouteChangeEvent):
+        route = event.route
+        if page.views:
+            history.append(page.views[-1].route)
+
+        page.views.clear()
+        page.views.append(
+            view_handler(page)[route],
+        )
+        page.update()
+
+    def view_pop(view):
+        if len(page.views) > 1:
+            history.pop()
+
+            previous_route = history.pop() if history else "/"
+            page.go(previous_route)
+        else:
+            page.go("/")
+
+    page.on_route_change = route_change
+    page.on_view_pop = view_pop
+
+    page.go("/")
 
 
 ft.app(target=main, assets_dir="./assets")

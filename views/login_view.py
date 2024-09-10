@@ -1,9 +1,13 @@
 import flet as ft
+import pydantic
+from icecream import ic
 
 # * custom imports
 from constants.constants import WidgetStyle, Pallet, Urls
 from controllers.controllers import LoginController
 from models.models import LoginModel
+
+ic.configureOutput(prefix="Debug | ", includeContext=True)
 
 
 class LoginView(ft.UserControl):
@@ -11,21 +15,19 @@ class LoginView(ft.UserControl):
         super().__init__()
         self.page = page
         self.controller = LoginController(url=Urls.login_url)
-        self.__card_width_to_page_ratio = 0.5
+        self.__card_width_to_page_ratio = 1
 
     async def on_login_click(self, e):
-        # settiing every field to disabled
-        self.form_card.disabled = True
-        self.update()
+        # Set every field to disabled
+        self.set_card_state(state=True)
+        ic("Login Function Triggered!!!")
 
-        print("Login Function Triggred!!!")
-
-        # ? Stroing email and password
+        # Storing email and password
         email = self.email_field.value
         password = self.password_field.value
 
         try:
-            await self.controller.login(
+            response_json = await self.controller.login(
                 data=LoginModel(
                     username=email,
                     password=password,
@@ -33,19 +35,24 @@ class LoginView(ft.UserControl):
             )
 
             if self.controller.is_logged_in:
-                # ? Setting controller's username variable to email
-                self.controller.username = self.email_field.value
+                try:
+                    await self.page.client_storage.set_async("taskmanager.ACCESS_TOKEN", response_json["access_token"])
+                    ic("Test value set successfully")
+                except Exception as e:
+                    ic("Test value setting failed", e)
 
-                # ? setting every field to enabled
-                self.form_card.disabled = False
-                self.update()
+                # Set every field to enabled
+                self.set_card_state(state=False)
 
-                print("Login Successful")
-        except Exception:
-            self.form_card.disabled = False
-            self.update()
-
-            print("Something went wrong!")
+                ic("Login Successful")
+                self.page.go("/")
+        except pydantic.ValidationError as e:
+            self.set_card_state(state=False)
+            ic("Something went wrong!", e)
+        except Exception as e:
+            ic("Overall Exception", e)
+        finally:
+            self.set_card_state(state=False)
 
     def build(self):
         # Email and password fields
@@ -126,8 +133,8 @@ class LoginView(ft.UserControl):
                                                         italic=True,
                                                         weight=ft.FontWeight.BOLD,
                                                     ),
-                                                    on_click=lambda _: print(
-                                                        "I Have To Sign Up."
+                                                    on_click=lambda _: self.page.go(
+                                                        "/"
                                                     ),
                                                 ),
                                             ],
@@ -143,5 +150,9 @@ class LoginView(ft.UserControl):
             ),
             shadow_color=ft.colors.SURFACE_VARIANT,
         )
-
+        self.form_card.width = self.page.width
         return self.form_card
+
+    def set_card_state(self, state: bool):
+        self.form_card.disabled = state
+        self.update()
