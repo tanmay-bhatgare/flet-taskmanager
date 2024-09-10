@@ -3,9 +3,10 @@ import pydantic
 from icecream import ic
 
 # * custom imports
-from constants.constants import WidgetStyle, Pallet, Urls
+from constants.constants import WidgetStyle, Pallet, Urls, Routes
 from controllers.controllers import LoginController
 from models.models import LoginModel
+from utils.jwt_token_encoder import encrypt_jwt
 
 ic.configureOutput(prefix="Debug | ", includeContext=True)
 
@@ -36,16 +37,18 @@ class LoginView(ft.UserControl):
 
             if self.controller.is_logged_in:
                 try:
-                    await self.page.client_storage.set_async("taskmanager.ACCESS_TOKEN", response_json["access_token"])
-                    ic("Test value set successfully")
+                    access_token = response_json["access_token"]
+                    await self.page.client_storage.set_async(
+                        "taskmanager.ACCESS_TOKEN", encrypt_jwt(access_token)
+                    )
                 except Exception as e:
                     ic("Test value setting failed", e)
 
                 # Set every field to enabled
                 self.set_card_state(state=False)
 
-                ic("Login Successful")
-                self.page.go("/")
+                ic(await self.page.client_storage.get_async("taskmanager.ACCESS_TOKEN"))
+                self.page.go(Routes.home_route)
         except pydantic.ValidationError as e:
             self.set_card_state(state=False)
             ic("Something went wrong!", e)
@@ -122,6 +125,7 @@ class LoginView(ft.UserControl):
                                 self.password_field,
                                 ft.Row(
                                     alignment=ft.MainAxisAlignment.CENTER,
+                                    wrap=True,
                                     controls=[
                                         ft.Text(
                                             spans=[
@@ -134,7 +138,7 @@ class LoginView(ft.UserControl):
                                                         weight=ft.FontWeight.BOLD,
                                                     ),
                                                     on_click=lambda _: self.page.go(
-                                                        "/"
+                                                        Routes.sign_up_route
                                                     ),
                                                 ),
                                             ],

@@ -1,11 +1,12 @@
 import warnings
 import flet as ft
-from utils.view_handler import view_handler
 
+# from utils
+from utils.view_handler import view_handler
 warnings.filterwarnings("ignore")
 
 
-def main(page: ft.Page):
+async def main(page: ft.Page):
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
