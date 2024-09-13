@@ -3,6 +3,8 @@ import flet as ft
 
 # from utils
 from utils.view_handler import view_handler
+from constants.constants import Routes
+
 warnings.filterwarnings("ignore")
 
 
@@ -18,9 +20,12 @@ async def main(page: ft.Page):
             history.append(page.views[-1].route)
 
         page.views.clear()
-        page.views.append(
+        try:
+            page.views.append(
             view_handler(page)[route],
         )
+        except Exception:
+            view_handler(page)[Routes.error_page]
         page.update()
 
     def view_pop(view):
