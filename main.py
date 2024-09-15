@@ -15,6 +15,7 @@ async def main(page: ft.Page):
     history = []
 
     def route_change(event: ft.RouteChangeEvent):
+        # print("Route changed to: ", event.route)
         route = event.route
         if page.views:
             history.append(page.views[-1].route)
@@ -40,7 +41,7 @@ async def main(page: ft.Page):
     page.on_route_change = route_change
     page.on_view_pop = view_pop
 
-    page.go("/")
+    page.go(Routes.sign_up_route)
 
 
 ft.app(target=main, assets_dir="./assets")

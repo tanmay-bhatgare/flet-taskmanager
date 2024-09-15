@@ -34,5 +34,4 @@ class LoginController:
             ic("An Error has occurred.")
             self.is_logged_in = False
         finally:
-            self.is_logged_in = True
             ic("Reached Finally")

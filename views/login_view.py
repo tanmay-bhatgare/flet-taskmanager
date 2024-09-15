@@ -7,6 +7,7 @@ from constants.constants import WidgetStyle, Pallet, Urls, Routes
 from controllers.controllers import LoginController
 from models.models import LoginModel
 from utils.jwt_token_encoder import encrypt_jwt
+from utils.field_error_updater import set_field_error_if_empty
 
 ic.configureOutput(prefix="Debug | ", includeContext=True)
 
@@ -16,17 +17,29 @@ class LoginView(ft.UserControl):
         super().__init__()
         self.page = page
         self.controller = LoginController(url=Urls.login_url)
-        self.__card_width_to_page_ratio = 1
+        self.__snack_bar = ft.SnackBar(
+            content=ft.Text(
+                "Login Successful, Enjoy!", color=Pallet.dark_text_color
+            ),
+            shape=ft.RoundedRectangleBorder(radius=8),
+            elevation=6,
+            dismiss_direction=ft.DismissDirection.HORIZONTAL,
+        )
 
     async def on_login_click(self, e):
         # Set every field to disabled
-        self.set_card_state(state=True)
         ic("Login Function Triggered!!!")
 
         # Storing email and password
         email = self.email_field.value
         password = self.password_field.value
 
+        if set_field_error_if_empty(self.email_field, "E-mail is required."):
+            return
+        if set_field_error_if_empty(self.password_field, "Password is required."):
+            return
+
+        self.disable_card_state(state=True)
         try:
             response_json = await self.controller.login(
                 data=LoginModel(
@@ -45,24 +58,26 @@ class LoginView(ft.UserControl):
                     ic("Test value setting failed", e)
 
                 # Set every field to enabled
-                self.set_card_state(state=False)
-
+                self.disable_card_state(state=False)
+                self.page.snack_bar = self.__snack_bar
+                self.page.snack_bar.open = True
+                self.page.update()
                 ic(await self.page.client_storage.get_async("taskmanager.ACCESS_TOKEN"))
                 self.page.go(Routes.home_route)
         except pydantic.ValidationError as e:
-            self.set_card_state(state=False)
+            self.disable_card_state(state=False)
             ic("Something went wrong!", e)
         except Exception as e:
             ic("Overall Exception", e)
         finally:
-            self.set_card_state(state=False)
+            self.disable_card_state(state=False)
 
     def build(self):
         # Email and password fields
         self.email_field = ft.TextField(
             label="E-mail",
             hint_text="Enter your email",
-            width=(self.page.width * self.__card_width_to_page_ratio) * 0.9,
+            width=self.page.width * 0.9,
             hint_style=WidgetStyle.input_field_style(
                 color=Pallet.light_text_color, size=16
             ),
@@ -75,7 +90,7 @@ class LoginView(ft.UserControl):
         self.password_field = ft.TextField(
             label="Password",
             hint_text="Enter your password",
-            width=(self.page.width * self.__card_width_to_page_ratio) * 0.9,
+            width=self.page.width * 0.9,
             password=True,
             can_reveal_password=True,
             hint_style=WidgetStyle.input_field_style(
@@ -99,7 +114,7 @@ class LoginView(ft.UserControl):
 
         self.form_card = ft.Card(
             color=Pallet.royal_purple,
-            width=self.page.width * self.__card_width_to_page_ratio,
+            width=self.page.width,
             height=self.page.height * 0.55,
             elevation=8,
             content=ft.Column(
@@ -157,6 +172,6 @@ class LoginView(ft.UserControl):
         self.form_card.width = self.page.width
         return self.form_card
 
-    def set_card_state(self, state: bool):
+    def disable_card_state(self, state: bool):
         self.form_card.disabled = state
         self.update()

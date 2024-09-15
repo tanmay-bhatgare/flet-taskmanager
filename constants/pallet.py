@@ -9,3 +9,4 @@ class Pallet:
     # Commonly Used Colors
     secondary_color = "#44d580"
     light_text_color = "#ffffff"
+    dark_text_color = "#000000"
