@@ -10,9 +10,9 @@ def view_handler(page: ft.Page):
             route=Routes.home_route,
             appbar=ft.AppBar(
                 title=ft.Text(
-                    "Welcome to the Homepage", size=20, color=ft.colors.WHITE
+                    "Homepage", size=20, color=ft.colors.WHITE
                 ),
-                bgcolor=ft.colors.BLUE_700,
+                bgcolor="#2b2d42"
             ),
             vertical_alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,

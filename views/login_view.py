@@ -1,3 +1,4 @@
+import math
 import flet as ft
 import pydantic
 from icecream import ic
@@ -18,9 +19,7 @@ class LoginView(ft.UserControl):
         self.page = page
         self.controller = LoginController(url=Urls.login_url)
         self.__snack_bar = ft.SnackBar(
-            content=ft.Text(
-                "Login Successful, Enjoy!", color=Pallet.dark_text_color
-            ),
+            content=ft.Text("Login Successful, Enjoy!", color=Pallet.dark_text_color),
             shape=ft.RoundedRectangleBorder(radius=8),
             elevation=6,
             dismiss_direction=ft.DismissDirection.HORIZONTAL,
@@ -110,13 +109,22 @@ class LoginView(ft.UserControl):
                 bgcolor=ft.colors.GREY_400,
             ),
             on_click=self.on_login_click,
+            elevation=5,
         )
 
-        self.form_card = ft.Card(
-            color=Pallet.royal_purple,
-            width=self.page.width,
-            height=self.page.height * 0.55,
-            elevation=8,
+        self.form_container = ft.Container(
+            height=self.page.height * 0.5,
+            border_radius=8,
+            gradient=ft.LinearGradient(
+                begin=ft.alignment.top_left,
+                end=ft.Alignment(0.8, 1),
+                colors=[
+                    "0xff1f005c",
+                    "0xff5b0060",
+                ],
+                tile_mode=ft.GradientTileMode.MIRROR,
+                rotation=math.pi / 6,
+            ),
             content=ft.Column(
                 alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -167,11 +175,10 @@ class LoginView(ft.UserControl):
                     self.login_button,
                 ],
             ),
-            shadow_color=ft.colors.SURFACE_VARIANT,
         )
-        self.form_card.width = self.page.width
-        return self.form_card
+        self.form_container.width = self.page.width
+        return self.form_container
 
     def disable_card_state(self, state: bool):
-        self.form_card.disabled = state
+        self.form_container.disabled = state
         self.update()

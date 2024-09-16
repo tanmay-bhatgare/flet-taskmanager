@@ -7,6 +7,6 @@ class Pallet:
     amethyst = "#61058d"
     
     # Commonly Used Colors
-    secondary_color = "#44d580"
+    secondary_color = "#60b3ea"
     light_text_color = "#ffffff"
     dark_text_color = "#000000"

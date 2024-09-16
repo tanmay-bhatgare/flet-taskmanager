@@ -1,3 +1,4 @@
+import math
 import flet as ft
 import pydantic
 from icecream import ic
@@ -7,6 +8,7 @@ from constants.constants import WidgetStyle, Pallet, Urls, Routes
 from controllers.controllers import SignUpController
 from models.models import SignUpModel
 from utils.field_error_updater import set_field_error_if_empty
+
 ic.configureOutput(prefix="Debug | ", includeContext=True)
 
 
@@ -142,11 +144,19 @@ class SignUpView(ft.UserControl):
             on_click=self.on_signup_click,
         )
 
-        self.form_card = ft.Card(
-            color=Pallet.royal_purple,
-            width=self.page.width,
+        self.form_container = ft.Container(
             height=self.page.height * 0.7,
-            elevation=8,
+            border_radius=8,
+            gradient=ft.LinearGradient(
+                begin=ft.alignment.top_left,
+                end=ft.Alignment(0.8, 1),
+                colors=[
+                    "0xff1f005c",
+                    "0xff5b0060",
+                ],
+                tile_mode=ft.GradientTileMode.MIRROR,
+                rotation=math.pi / 3,
+            ),
             content=ft.Column(
                 alignment=ft.MainAxisAlignment.SPACE_EVENLY,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -201,12 +211,11 @@ class SignUpView(ft.UserControl):
                     self.sign_in_button,
                 ],
             ),
-            shadow_color=ft.colors.SURFACE_VARIANT,
         )
-        return self.form_card
+        return self.form_container
 
     def disable_card_state(self, state: bool):
-        self.form_card.disabled = state
+        self.form_container.disabled = state
         self.update()
 
     @staticmethod

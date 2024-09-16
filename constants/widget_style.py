@@ -22,7 +22,8 @@ class WidgetStyle:
                 vertical=padding_vertical, horizontal=padding_horizontal
             ),
             text_style=ft.TextStyle(size=font_size, weight=weight),
-            **kwargs
+            shadow_color="black",
+            **kwargs,
         )
 
     def input_field_style(color, size, **kwargs):
