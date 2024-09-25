@@ -22,8 +22,8 @@ class LoginController:
                     self.is_logged_in = True
                     return response.json()
                 else:
-                    ic(response.json())
                     self.is_logged_in = False
+                    return response.json()
         except httpx.HTTPStatusError:
             ic("Unable to send request.")
             self.is_logged_in = False

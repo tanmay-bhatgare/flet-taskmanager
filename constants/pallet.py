@@ -10,3 +10,7 @@ class Pallet:
     secondary_color = "#60b3ea"
     light_text_color = "#ffffff"
     dark_text_color = "#000000"
+    
+    # Card Colors
+    card_bg_color = "#15191e"
+    card_textfield = "#13181b"

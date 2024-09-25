@@ -9,7 +9,7 @@ class SignUpController:
         self.has_signed_up = None
         self.error_message = ""
 
-    async def sign_up(self, data: SignUpModel):
+    async def sign_up(self, data: SignUpModel)-> dict[str, str]:
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
@@ -18,17 +18,18 @@ class SignUpController:
                 )
                 if response.status_code == 201:
                     self.has_signed_up = True
+                    return {"detail": "Sign Up Successful! Please Log In."}
 
                 else:
-                    ic(response.json())
                     self.has_signed_up = False
+                    return response.json()
         except httpx.HTTPStatusError:
             ic("Unable to send request.")
             self.has_signed_up = False
         except httpx.RequestError:
             ic("Request error occurred.")
             self.has_signed_up = False
-        except Exception: #? Base Exception Case
+        except Exception:  # ? Base Exception Case
             ic("An Error has occurred.")
             self.has_signed_up = False
         finally:

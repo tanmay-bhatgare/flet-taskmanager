@@ -12,6 +12,7 @@ class WidgetStyle:
         padding_horizontal: int = 14,
         font_size: int = 23,
         weight: str = ft.FontWeight.W_600,
+        italic: bool = False,
         **kwargs
     ):
         return ft.ButtonStyle(
@@ -21,7 +22,7 @@ class WidgetStyle:
             padding=ft.padding.symmetric(
                 vertical=padding_vertical, horizontal=padding_horizontal
             ),
-            text_style=ft.TextStyle(size=font_size, weight=weight),
+            text_style=ft.TextStyle(size=font_size, weight=weight, italic=italic),
             shadow_color="black",
             **kwargs,
         )

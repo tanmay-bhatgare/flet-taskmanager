@@ -40,7 +40,7 @@ class LoginView(ft.UserControl):
 
         self.disable_card_state(state=True)
         try:
-            response_json = await self.controller.login(
+            response = await self.controller.login(
                 data=LoginModel(
                     username=email,
                     password=password,
@@ -49,12 +49,15 @@ class LoginView(ft.UserControl):
 
             if self.controller.is_logged_in:
                 try:
-                    access_token = response_json["access_token"]
+                    access_token = response["access_token"]
                     await self.page.client_storage.set_async(
                         "taskmanager.ACCESS_TOKEN", encrypt_jwt(access_token)
                     )
-                except Exception as e:
-                    ic("Test value setting failed", e)
+                    await self.page.client_storage.set_async(
+                        "taskmanager.is_logged_in", True
+                    )
+                except Exception:
+                    ic("Failed To Store Token")
 
                 # Set every field to enabled
                 self.disable_card_state(state=False)
@@ -63,8 +66,21 @@ class LoginView(ft.UserControl):
                 self.page.update()
                 ic(await self.page.client_storage.get_async("taskmanager.ACCESS_TOKEN"))
                 self.page.go(Routes.home_route)
+            else:
+                try:
+                    self.disable_card_state(state=False)
+                    error_message = response["detail"]
+                    self.__snack_bar.content.value = error_message
+                    self.page.snack_bar = self.__snack_bar
+                    self.page.snack_bar.open = True
+                    self.page.update()
+
+                except TypeError as e:
+                    ic("TypeError occurred", e)
         except pydantic.ValidationError as e:
             self.disable_card_state(state=False)
+            self.email_field.error_text = "Invalid E-mail."
+            self.email_field.update()
             ic("Something went wrong!", e)
         except Exception as e:
             ic("Overall Exception", e)
@@ -113,7 +129,7 @@ class LoginView(ft.UserControl):
         )
 
         self.form_container = ft.Container(
-            height=self.page.height * 0.5,
+            height=self.page.height * 0.55,
             border_radius=8,
             gradient=ft.LinearGradient(
                 begin=ft.alignment.top_left,
@@ -171,6 +187,7 @@ class LoginView(ft.UserControl):
                                 ),
                             ],
                         ),
+                        margin=ft.margin.only(bottom=20),
                     ),
                     self.login_button,
                 ],

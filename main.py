@@ -1,11 +1,14 @@
 import warnings
 import flet as ft
+from icecream import ic
+
 
 # from utils
 from utils.view_handler import view_handler
 from constants.constants import Routes
 
 warnings.filterwarnings("ignore")
+ic.configureOutput(prefix="Debug | ", includeContext=True)
 
 
 async def main(page: ft.Page):
@@ -23,10 +26,10 @@ async def main(page: ft.Page):
         page.views.clear()
         try:
             page.views.append(
-            view_handler(page)[route],
-        )
-        except Exception:
-            view_handler(page)[Routes.error_page]
+                view_handler(page)[route],
+            )
+        except Exception as e:
+            ic(e)
         page.update()
 
     def view_pop(view):

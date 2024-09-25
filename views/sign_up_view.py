@@ -18,9 +18,7 @@ class SignUpView(ft.UserControl):
         self.page = page
         self.controller = SignUpController(url=Urls.sign_up_url)
         self.__snack_bar = ft.SnackBar(
-            content=ft.Text(
-                "Sign Up Successful! Please Log In.", color=Pallet.dark_text_color
-            ),
+            content=ft.Text("", color=Pallet.dark_text_color),
             shape=ft.RoundedRectangleBorder(radius=8),
             elevation=6,
             dismiss_direction=ft.DismissDirection.HORIZONTAL,
@@ -53,7 +51,7 @@ class SignUpView(ft.UserControl):
 
         self.disable_card_state(state=True)
         try:
-            await self.controller.sign_up(
+            response = await self.controller.sign_up(
                 data=SignUpModel(
                     username=username,
                     email=email,
@@ -62,14 +60,29 @@ class SignUpView(ft.UserControl):
             )
 
             if self.controller.has_signed_up:
-                # Set every field to enabled
                 self.disable_card_state(state=False)
+                self.__snack_bar.content.value = response["detail"]
                 self.page.snack_bar = self.__snack_bar
                 self.page.snack_bar.open = True
                 self.page.update()
                 self.page.go(Routes.login_route)
+            else:
+                self.disable_card_state(state=False)
+                self.__snack_bar.content.value = response["detail"]
+                self.page.snack_bar = self.__snack_bar
+                self.page.snack_bar.open = True
+                self.page.update()
         except pydantic.ValidationError as e:
             self.disable_card_state(state=False)
+            self.__snack_bar.bgcolor = "#262626"
+            self.__snack_bar.content.color = "red"
+            self.__snack_bar.content.size = 15
+            self.__snack_bar.content.italic = True
+            self.__snack_bar.content.value = "E-mail is Invalid."
+            self.page.snack_bar = self.__snack_bar
+            self.page.snack_bar.open = True
+            self.page.update()
+
             ic("Something went wrong!", e)
         except Exception as e:
             ic("Overall Exception", e)

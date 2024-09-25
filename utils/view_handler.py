@@ -7,12 +7,17 @@ def view_handler(page: ft.Page):
     return {
         # ? Home View
         f"{Routes.home_route}": ft.View(
+            scroll="always",
             route=Routes.home_route,
             appbar=ft.AppBar(
-                title=ft.Text(
-                    "Homepage", size=20, color=ft.colors.WHITE
-                ),
-                bgcolor="#2b2d42"
+                leading=ft.Icon(name=ft.icons.TASK_ALT_SHARP),
+                leading_width=24,
+                title=ft.Text("Task Manager", size=20, color=ft.colors.WHITE),
+                bgcolor="#2b2d42",
+                actions=[ft.IconButton(icon=ft.icons.REFRESH)],
+            ),
+            floating_action_button=ft.FloatingActionButton(
+                icon=ft.icons.ADD, on_click=lambda _: print("Floating Action Clicked")
             ),
             vertical_alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -33,9 +38,7 @@ def view_handler(page: ft.Page):
                     else ft.icons.ARROW_BACK_IOS_NEW,
                     on_click=lambda _: page.go(Routes.login_route),
                 ),
-                title=ft.Text(
-                    "Sign Up", size=20, color=ft.colors.WHITE
-                ),
+                title=ft.Text("Sign Up", size=20, color=ft.colors.WHITE),
                 automatically_imply_leading=True,
                 bgcolor="#2b2d42",
             ),
