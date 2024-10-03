@@ -163,7 +163,7 @@ class LoginView(ft.UserControl):
                     ft.Container(
                         margin=ft.margin.only(bottom=30),
                         content=ft.Text(
-                            "Login",
+                            "Log In",
                             weight=ft.FontWeight.BOLD,
                             size=45,
                             color="white",

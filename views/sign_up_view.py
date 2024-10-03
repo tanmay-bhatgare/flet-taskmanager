@@ -92,6 +92,7 @@ class SignUpView(ft.UserControl):
     def build(self):
         # Email and password fields
         self.username_field = ft.TextField(
+            on_focus=lambda _: self.clear_err_text(self.username_field),
             label="Username",
             hint_text="Choose your username",
             width=self.page.width * 0.9,
@@ -103,8 +104,10 @@ class SignUpView(ft.UserControl):
             ),
             color=Pallet.light_text_color,
             border_color="white",
+            max_length=18,
         )
         self.email_field = ft.TextField(
+            on_focus=lambda _: self.clear_err_text(self.email_field),
             label="E-mail",
             hint_text="Enter your email",
             width=self.page.width * 0.9,
@@ -118,6 +121,7 @@ class SignUpView(ft.UserControl):
             border_color="white",
         )
         self.password_field = ft.TextField(
+            on_focus=lambda _: self.clear_err_text(self.password_field),
             label="Password",
             hint_text="Enter your password",
             width=self.page.width * 0.9,
@@ -133,6 +137,7 @@ class SignUpView(ft.UserControl):
             border_color="white",
         )
         self.confirm_password_field = ft.TextField(
+            on_focus=lambda _: self.clear_err_text(self.confirm_password_field),
             label="Confirm Password",
             hint_text="Re-enter your password",
             width=self.page.width * 0.9,
@@ -234,3 +239,9 @@ class SignUpView(ft.UserControl):
     @staticmethod
     def check_password_match(password: str, confirm_password: str):
         return password == confirm_password
+    
+    @staticmethod
+    def clear_err_text(field: ft.TextField):
+        print("Clearing Error Text")
+        field.error_text = ""
+        field.update()
