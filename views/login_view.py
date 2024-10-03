@@ -4,11 +4,15 @@ import pydantic
 from icecream import ic
 
 # * custom imports
-from constants.constants import WidgetStyle, Pallet, Urls, Routes
+from constants.constants import WidgetStyle, Pallet, Urls, Routes, SessionKey
 from controllers.controllers import LoginController
 from models.models import LoginModel
 from utils.jwt_token_encoder import encrypt_jwt
 from utils.field_error_updater import set_field_error_if_empty
+from utils.session_storage_setter import (
+    async_get_session_value,
+    async_set_session_value,
+)
 
 ic.configureOutput(prefix="Debug | ", includeContext=True)
 
@@ -50,11 +54,15 @@ class LoginView(ft.UserControl):
             if self.controller.is_logged_in:
                 try:
                     access_token = response["access_token"]
-                    await self.page.client_storage.set_async(
-                        "taskmanager.ACCESS_TOKEN", encrypt_jwt(access_token)
+                    await async_set_session_value(
+                        page=self.page,
+                        key=SessionKey.access_token,
+                        value=encrypt_jwt(access_token),
                     )
-                    await self.page.client_storage.set_async(
-                        "taskmanager.is_logged_in", True
+                    await async_set_session_value(
+                        page=self.page,
+                        key=SessionKey.is_logged_in,
+                        value=True,
                     )
                 except Exception:
                     ic("Failed To Store Token")
@@ -64,7 +72,11 @@ class LoginView(ft.UserControl):
                 self.page.snack_bar = self.__snack_bar
                 self.page.snack_bar.open = True
                 self.page.update()
-                ic(await self.page.client_storage.get_async("taskmanager.ACCESS_TOKEN"))
+                ic(
+                    await async_get_session_value(
+                        page=self.page, key=SessionKey.access_token
+                    )
+                )
                 self.page.go(Routes.home_route)
             else:
                 try:
@@ -90,6 +102,7 @@ class LoginView(ft.UserControl):
     def build(self):
         # Email and password fields
         self.email_field = ft.TextField(
+            value="t4@g.com",
             label="E-mail",
             hint_text="Enter your email",
             width=self.page.width * 0.9,
@@ -103,6 +116,7 @@ class LoginView(ft.UserControl):
             border_color="white",
         )
         self.password_field = ft.TextField(
+            value="12",
             label="Password",
             hint_text="Enter your password",
             width=self.page.width * 0.9,
@@ -116,6 +130,7 @@ class LoginView(ft.UserControl):
             ),
             color=Pallet.light_text_color,
             border_color="white",
+            on_submit=self.on_login_click,
         )
         self.login_button = ft.ElevatedButton(
             text="Log In",

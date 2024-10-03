@@ -4,6 +4,7 @@ from views.views import HomeView, LoginView, SignUpView
 
 
 def view_handler(page: ft.Page):
+    home_view = HomeView(page=page)
     return {
         # ? Home View
         f"{Routes.home_route}": ft.View(
@@ -11,17 +12,22 @@ def view_handler(page: ft.Page):
             route=Routes.home_route,
             appbar=ft.AppBar(
                 leading=ft.Icon(name=ft.icons.TASK_ALT_SHARP),
-                leading_width=24,
+                leading_width=30,
                 title=ft.Text("Task Manager", size=20, color=ft.colors.WHITE),
                 bgcolor="#2b2d42",
-                actions=[ft.IconButton(icon=ft.icons.REFRESH)],
+                actions=[
+                    ft.IconButton(
+                        icon=ft.icons.REFRESH,
+                        on_click=lambda _: home_view.refresh_tasks(),
+                    ),
+                ],
             ),
             floating_action_button=ft.FloatingActionButton(
                 icon=ft.icons.ADD, on_click=lambda _: print("Floating Action Clicked")
             ),
             vertical_alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[HomeView(page=page)],
+            controls=[home_view],
         ),
         # ? Sign Up View
         f"{Routes.sign_up_route}": ft.View(

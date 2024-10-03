@@ -3,6 +3,7 @@ from typing import Callable
 import flet as ft
 
 from constants.constants import Pallet, WidgetStyle
+from utils.date_converter import ISO8601_to_std
 
 
 class TaskCard(ft.UserControl):
@@ -20,7 +21,7 @@ class TaskCard(ft.UserControl):
         height: int = 280,
         width: int = 360,
         background_color: str = "red",
-        **kwargs
+        **kwargs,
     ):
         super().__init__()
         self.height = height
@@ -47,7 +48,9 @@ class TaskCard(ft.UserControl):
                                 weight=ft.FontWeight.BOLD,
                             ),
                             # ? created date
-                            ft.Text(created_at, color=ft.colors.GREY_400),
+                            ft.Text(
+                                ISO8601_to_std(created_at), color=ft.colors.GREY_400
+                            ),
                         ],
                     ),
                     # ? Description
@@ -60,11 +63,12 @@ class TaskCard(ft.UserControl):
                         border_color=ft.colors.TRANSPARENT,
                         border_radius=7,
                         fill_color=Pallet.card_textfield,
+                        hover_color="transparent",
                     ),
                     ft.Column(
                         controls=[
                             # ? Due date
-                            ft.Text(due_date),
+                            ft.Text(f"Due: {ISO8601_to_std(due_date)}"),
                             ft.Row(
                                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                                 controls=[

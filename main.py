@@ -5,7 +5,8 @@ from icecream import ic
 
 # from utils
 from utils.view_handler import view_handler
-from constants.constants import Routes
+from constants.constants import Routes, SessionKey
+from utils.session_storage_setter import async_get_session_value
 
 warnings.filterwarnings("ignore")
 ic.configureOutput(prefix="Debug | ", includeContext=True)
@@ -43,8 +44,14 @@ async def main(page: ft.Page):
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
+    __is_logged_in = await async_get_session_value(
+        page=page, key=SessionKey.is_logged_in
+    )
 
-    page.go(Routes.login_route)
+    if __is_logged_in:
+        page.go(Routes.home_route)
+    else:
+        page.go(Routes.login_route)
 
 
 ft.app(target=main, assets_dir="./assets")
