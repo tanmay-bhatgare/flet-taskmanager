@@ -49,7 +49,7 @@ async def main(page: ft.Page):
     )
 
     if __is_logged_in:
-        page.go(Routes.login_route)
+        page.go(Routes.home_route)
     else:
         page.go(Routes.login_route)
 

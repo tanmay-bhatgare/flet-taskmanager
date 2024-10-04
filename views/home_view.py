@@ -18,6 +18,17 @@ class HomeView(ft.UserControl):
         self.page: ft.Page = page
         self.controller: TaskController | None = None
         self.tasks: list[dict] = []
+        self.__delete_dialog = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Confirm Delete"),
+            content=ft.Text("Can't Undone this!"),
+            actions=[
+                ft.TextButton("Yes", on_click=self.__handle_delete_yes),
+                ft.TextButton("No", on_click=self.__handle_delete_no),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+            data=None,
+        )
         self.page.theme = ft.Theme(
             scrollbar_theme=ft.ScrollbarTheme(
                 track_color={
@@ -32,6 +43,21 @@ class HomeView(ft.UserControl):
                 },
             )
         )
+
+    async def __handle_delete_yes(self, e):
+        task_id = self.__delete_dialog.data
+        response = await self.controller.delete_task(url=f"{Urls.delete_task_url}/{task_id}")
+        if response:
+            self.refresh_tasks()
+        self.page.close(self.__delete_dialog)
+        
+    
+    def __handle_delete_no(self, e):
+        self.page.close(self.__delete_dialog)
+
+    def handle_delete(self, task_id: int):
+        self.__delete_dialog.data = task_id
+        self.page.open(self.__delete_dialog)
 
     async def fetch_tasks(self):
         ic("Fetching Tasks")
@@ -58,8 +84,8 @@ class HomeView(ft.UserControl):
             TaskCard(
                 width=self.page.width,
                 background_color=Pallet.card_bg_color,
-                update_function=lambda _: print("Update"),
-                delete_function=lambda _: print("Delete"),
+                update_function=lambda _, task_id=task["id"]: print("Update", task_id),
+                delete_function=lambda _, task_id=task["id"]: self.handle_delete(task_id=task_id),
                 **task,
             )
             for task in self.tasks
@@ -74,6 +100,9 @@ class HomeView(ft.UserControl):
         ic("Control Mounted")
         future = self.page.run_task(self.fetch_tasks)
         future.add_done_callback(lambda f: ic(f.result()))
+
+    def open_dlg(self):
+        self.page.open(self.__delete_dialog)
 
     def build(self) -> ft.Control:
         self.__build_content = ft.ListView(

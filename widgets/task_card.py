@@ -46,6 +46,8 @@ class TaskCard(ft.UserControl):
                                 style=ft.TextThemeStyle.TITLE_LARGE,
                                 color=Pallet.light_text_color,
                                 weight=ft.FontWeight.BOLD,
+                                overflow=ft.TextOverflow.ELLIPSIS,
+                                width=320,
                             ),
                             # ? created date
                             ft.Text(
