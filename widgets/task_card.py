@@ -47,7 +47,7 @@ class TaskCard(ft.UserControl):
                                 color=Pallet.light_text_color,
                                 weight=ft.FontWeight.BOLD,
                                 overflow=ft.TextOverflow.ELLIPSIS,
-                                width=320,
+                                width=self.width * 0.5,
                             ),
                             # ? created date
                             ft.Text(
@@ -80,7 +80,7 @@ class TaskCard(ft.UserControl):
                                         height=40,
                                         on_click=delete_function,
                                         style=WidgetStyle.action_button(
-                                            bgcolor="#ef4444",
+                                            bgcolor="#e11d48",
                                             text_color="white",
                                             font_size=18,
                                             border_radius=12,
@@ -95,7 +95,7 @@ class TaskCard(ft.UserControl):
                                         height=40,
                                         on_click=update_function,
                                         style=WidgetStyle.action_button(
-                                            bgcolor=ft.colors.BLUE_700,
+                                            bgcolor="#3b82f6",
                                             text_color="white",
                                             font_size=18,
                                             border_radius=12,

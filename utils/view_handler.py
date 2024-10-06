@@ -23,7 +23,7 @@ def view_handler(page: ft.Page):
                 ],
             ),
             floating_action_button=ft.FloatingActionButton(
-                icon=ft.icons.ADD, on_click=lambda _: print("Floating Action Clicked")
+                icon=ft.icons.ADD, on_click=home_view.trial_func, bgcolor="#60a5fa"
             ),
             vertical_alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
