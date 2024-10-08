@@ -22,13 +22,12 @@ class TaskBaseModel(BaseModel):
 
 
 class CreateTaskModel(TaskBaseModel):
-    due_date: Optional[datetime]
-    pass
+    due_date: Optional[datetime | str]
 
 
 class UpdateTaskModel(TaskBaseModel):
     due_date: Optional[datetime]
-    is_completed: bool
+    is_completed: Optional[bool]
 
 
 class TaskResponseModel(TaskBaseModel):

@@ -1,7 +1,7 @@
 from .task_card import TaskCard
-from .update_task_card import UpdateTaskCard
+from .pop_up_task_card import PopUpTaskCard
 
 __all__ = [
     "TaskCard",
-    "UpdateTaskCard",
+    "PopUpTaskCard",
 ]

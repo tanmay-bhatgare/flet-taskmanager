@@ -23,7 +23,10 @@ def view_handler(page: ft.Page):
                 ],
             ),
             floating_action_button=ft.FloatingActionButton(
-                icon=ft.icons.ADD, on_click=home_view.trial_func, bgcolor="#60a5fa"
+                icon=ft.icons.ADD,
+                on_click=home_view.show_create_task_popup,
+                bgcolor="#4f46e5",
+                foreground_color=ft.colors.WHITE,
             ),
             vertical_alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,

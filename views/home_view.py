@@ -2,7 +2,7 @@ from typing import Any, Dict
 import flet as ft
 from icecream import ic
 
-from widgets.widgets import TaskCard, UpdateTaskCard
+from widgets.widgets import TaskCard, PopUpTaskCard
 from constants.constants import Pallet, Urls, SessionKey
 from controllers.controllers import TaskController
 from utils.jwt_token_encoder import decrypt_jwt
@@ -17,6 +17,13 @@ class HomeView(ft.UserControl):
         self.page: ft.Page = page
         self.controller: TaskController | None = None
         self.tasks: list[dict] = []
+        self._create_task_card = PopUpTaskCard(
+            type="create",
+            width=self.page.width * 0.98,
+            background_color=Pallet.card_bg_color,
+            save_function=self.create_task,
+        )
+
         self.__delete_dialog = ft.AlertDialog(
             modal=True,
             title=ft.Text("Confirm Delete"),
@@ -71,9 +78,25 @@ class HomeView(ft.UserControl):
     def __handle_delete_no(self, e):
         self.page.close(self.__delete_dialog)
 
-    def handle_delete(self, task_id: int):
+    def open_delete_dlg(self, task_id: int):
         self.__delete_dialog.data = task_id
         self.page.open(self.__delete_dialog)
+
+    async def create_task(self, e):
+        ic("Creating Task")
+        task_data = self._create_task_card.return_data()
+        
+        if task_data.title and task_data.description and task_data.due_date:
+            response = await self.controller.create_task(
+                url=Urls.create_task_url, task_data=task_data
+            )
+
+            if response:
+                self.refresh_tasks()
+            self.page.overlay.remove(self._centered_container)
+            self.page.update()
+        else:
+            ic("Title Can't Be empty")
 
     async def fetch_tasks(self):
         ic("Fetching Tasks")
@@ -102,7 +125,7 @@ class HomeView(ft.UserControl):
                 update_function=lambda _, task_id=task["id"]: print(
                     f"Update {task_id}"
                 ),
-                delete_function=lambda _, task_id=task["id"]: self.handle_delete(
+                delete_function=lambda _, task_id=task["id"]: self.open_delete_dlg(
                     task_id=task_id
                 ),
                 **task,
@@ -123,23 +146,16 @@ class HomeView(ft.UserControl):
     def open_dlg(self):
         self.page.open(self.__delete_dialog)
 
-    def trial_func(self, e):
-        
-        update_task_card = UpdateTaskCard(
-            width=self.page.width * 0.98,
-            title="Centered Task Card",
-            background_color=Pallet.card_bg_color,
-        )
-
-        centered_container = ft.Container(
-            content=update_task_card,
+    def show_create_task_popup(self, e):
+        self._centered_container = ft.Container(
+            content=self._create_task_card,
             alignment=ft.alignment.center,
             expand=True,
             bgcolor=ft.colors.with_opacity(0.7, ft.colors.BLACK),
         )
         if self.page.overlay:
             self.page.overlay.pop()
-        self.page.overlay.append(centered_container)
+        self.page.overlay.append(self._centered_container)
 
         self.page.update()
 

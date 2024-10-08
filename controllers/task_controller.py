@@ -70,13 +70,19 @@ class TaskController:
                     json=task_data.model_dump(),
                 )
                 if response.status_code == status.HTTP_201_CREATED:
+                    return True
+                else:
                     ic(response.json())
-        except httpx.HTTPStatusError:
-            ic("Unable to send request.")
-        except httpx.RequestError:
-            ic("Request error occurred.")
-        except Exception:
-            ic("An Error has occurred.")
+                    return False
+        except httpx.HTTPStatusError as e:
+            ic("Unable to send request.", e)
+            return False
+        except httpx.RequestError as e:
+            ic("Request error occurred.", e)
+            return False
+        except Exception as e:
+            ic("An Error has occurred.", e)
+            return False
         finally:
             ic("Reached Finally")
 
