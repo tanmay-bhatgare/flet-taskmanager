@@ -38,7 +38,7 @@ class PopUpTaskCard(ft.Container):
         self.__due_date_text_field = ft.Text(
             f"{ISO8601_to_std(self.__due_date_cal.value)}"
         )
-        self.__title_textfield = ft.TextField(
+        self._title_textfield = ft.TextField(
             expand=True,
             border_color=Pallet.transparent,
             focused_border_color=Pallet.transparent,
@@ -49,7 +49,7 @@ class PopUpTaskCard(ft.Container):
             autocorrect=True,
             max_length=50,
         )
-        self.__description_textfield = ft.TextField(
+        self._description_textfield = ft.TextField(
             height=150,
             min_lines=5,
             multiline=True,
@@ -77,11 +77,11 @@ class PopUpTaskCard(ft.Container):
                 ft.Row(
                     controls=[
                         # Title TextField
-                        self.__title_textfield,
+                        self._title_textfield,
                     ],
                 ),
                 # Description
-                self.__description_textfield,
+                self._description_textfield,
                 # Due Date
                 ft.Row(
                     spacing=0,
@@ -146,8 +146,8 @@ class PopUpTaskCard(ft.Container):
         self.__due_date_text_field.update()
 
     def return_data(self) -> CreateTaskModel:
-        title = self.__title_textfield.value
-        description = self.__description_textfield.value
+        title = self._title_textfield.value
+        description = self._description_textfield.value
         due_date = self.__due_date_text_field.value
         due_date_iso = str_to_datetime(due_date).isoformat()
 

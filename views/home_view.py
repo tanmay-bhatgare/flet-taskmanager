@@ -85,7 +85,7 @@ class HomeView(ft.UserControl):
     async def create_task(self, e):
         ic("Creating Task")
         task_data = self._create_task_card.return_data()
-        
+
         if task_data.title and task_data.description and task_data.due_date:
             response = await self.controller.create_task(
                 url=Urls.create_task_url, task_data=task_data
@@ -97,6 +97,9 @@ class HomeView(ft.UserControl):
             self.page.update()
         else:
             ic("Title Can't Be empty")
+        self._create_task_card._title_textfield.value = ""
+        self._create_task_card._description_textfield.value = ""
+        self.page.update()
 
     async def fetch_tasks(self):
         ic("Fetching Tasks")
@@ -155,6 +158,7 @@ class HomeView(ft.UserControl):
         )
         if self.page.overlay:
             self.page.overlay.pop()
+            self.page.update()
         self.page.overlay.append(self._centered_container)
 
         self.page.update()
