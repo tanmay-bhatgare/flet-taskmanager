@@ -5,3 +5,4 @@ class Urls:
     get_tasks_url = f"{base_url}/tasks/"
     create_task_url = f"{base_url}/tasks/create"
     delete_task_url = f"{base_url}/tasks/delete"
+    update_task_url = f"{base_url}/tasks/update"

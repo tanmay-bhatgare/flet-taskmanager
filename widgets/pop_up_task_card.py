@@ -1,6 +1,6 @@
 import datetime as dt
 from datetime import datetime
-from typing import Callable, Literal
+from typing import Any, Callable, Literal
 import flet as ft
 
 from constants.constants import Pallet, WidgetStyle
@@ -12,10 +12,11 @@ class PopUpTaskCard(ft.Container):
     def __init__(
         self,
         type: Literal["create", "update"] = None,
-        height: int = 340,
+        data: Any | None = None,
+        height: int = 360,
         width: int = 360,
         background_color: str = "red",
-        save_function: Callable = None,
+        submit_function: Callable = None,
         **kwargs,
     ):
         # Initialize the parent Container
@@ -28,15 +29,16 @@ class PopUpTaskCard(ft.Container):
             padding=ft.padding.all(8),
             **kwargs,
         )
-        self._type = type
-        self.__due_date_cal = ft.DatePicker(
+        self._type: Literal["create"] | Literal["update"] = type
+        self._data: Any | None = data
+        self._due_date_cal = ft.DatePicker(
             value=datetime.now().isoformat(),
             first_date=datetime.now(),
             last_date=datetime.now() + dt.timedelta(days=365 * 5),
             on_change=self.__due_date_change,
         )
-        self.__due_date_text_field = ft.Text(
-            f"{ISO8601_to_std(self.__due_date_cal.value)}"
+        self._due_date_text_field = ft.Text(
+            f"{ISO8601_to_std(self._due_date_cal.value)}"
         )
         self._title_textfield = ft.TextField(
             expand=True,
@@ -69,7 +71,6 @@ class PopUpTaskCard(ft.Container):
             controls=[
                 ft.Row(
                     alignment=ft.MainAxisAlignment.END,
-                    height=30,
                     controls=[
                         ft.IconButton(icon=ft.icons.CLOSE, on_click=self._self_close),
                     ],
@@ -87,7 +88,7 @@ class PopUpTaskCard(ft.Container):
                     spacing=0,
                     controls=[
                         ft.Text("Due Date: "),
-                        self.__due_date_text_field,
+                        self._due_date_text_field,
                     ],
                 ),
                 ft.Column(
@@ -106,17 +107,17 @@ class PopUpTaskCard(ft.Container):
                                         bgcolor="#34d399",
                                     ),
                                     on_click=lambda _: self.page.open(
-                                        self.__due_date_cal,
+                                        self._due_date_cal,
                                     ),
                                 ),
                                 # Update button
                                 ft.ElevatedButton(
-                                    text="Set Task"
+                                    text="Set Task "
                                     if self._type == "create"
-                                    else "Update Task",
+                                    else "Update ",
                                     height=40,
-                                    on_click=save_function
-                                    if save_function
+                                    on_click=submit_function
+                                    if submit_function
                                     else lambda _: print(self.return_data()),
                                     style=WidgetStyle.action_button(
                                         bgcolor="#3b82f6",
@@ -140,15 +141,13 @@ class PopUpTaskCard(ft.Container):
         self.page.update()
 
     def __due_date_change(self, e):
-        self.__due_date_text_field.value = (
-            f"{ISO8601_to_std(self.__due_date_cal.value)}"
-        )
-        self.__due_date_text_field.update()
+        self._due_date_text_field.value = f"{ISO8601_to_std(self._due_date_cal.value)}"
+        self._due_date_text_field.update()
 
-    def return_data(self) -> CreateTaskModel:
+    def return_data(self) -> CreateTaskModel | UpdateTaskModel | None:
         title = self._title_textfield.value
         description = self._description_textfield.value
-        due_date = self.__due_date_text_field.value
+        due_date = self._due_date_text_field.value
         due_date_iso = str_to_datetime(due_date).isoformat()
 
         if self._type == "create":

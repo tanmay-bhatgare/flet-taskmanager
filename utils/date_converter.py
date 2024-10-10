@@ -4,7 +4,7 @@ from icecream import ic
 ic.configureOutput(prefix="Debug | ", includeContext=True)
 
 
-def ISO8601_to_std(date) -> str:
+def ISO8601_to_std(date: str | datetime) -> str:
     if date is None:
         return None
     try:
@@ -34,4 +34,5 @@ def str_to_datetime(date: str):
 
 
 if __name__ == "__main__":
+    print(ISO8601_to_std(datetime.now()))
     print(str_to_datetime("24/07/07").isoformat())

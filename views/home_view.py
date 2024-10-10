@@ -7,6 +7,9 @@ from constants.constants import Pallet, Urls, SessionKey
 from controllers.controllers import TaskController
 from utils.jwt_token_encoder import decrypt_jwt
 from utils.session_storage_setter import async_get_session_value
+from utils.date_converter import ISO8601_to_std
+from models.models import TaskResponseModel, UpdateTaskModel, CreateTaskModel
+
 
 ic.configureOutput(prefix="Debug | ", includeContext=True)
 
@@ -21,7 +24,13 @@ class HomeView(ft.UserControl):
             type="create",
             width=self.page.width * 0.98,
             background_color=Pallet.card_bg_color,
-            save_function=self.create_task,
+            submit_function=self.create_task,
+        )
+        self._update_task_card = PopUpTaskCard(
+            type="update",
+            width=self.page.width * 0.98,
+            background_color=Pallet.card_bg_color,
+            submit_function=self.update_task,
         )
 
         self.__delete_dialog = ft.AlertDialog(
@@ -84,7 +93,8 @@ class HomeView(ft.UserControl):
 
     async def create_task(self, e):
         ic("Creating Task")
-        task_data = self._create_task_card.return_data()
+        task_data: CreateTaskModel = self._create_task_card.return_data()
+        print(task_data)
 
         if task_data.title and task_data.description and task_data.due_date:
             response = await self.controller.create_task(
@@ -93,12 +103,30 @@ class HomeView(ft.UserControl):
 
             if response:
                 self.refresh_tasks()
-            self.page.overlay.remove(self._centered_container)
+            self.page.overlay.remove(self._create_task_centered_container)
             self.page.update()
         else:
-            ic("Title Can't Be empty")
+            ic("All Fields Are Required!")
         self._create_task_card._title_textfield.value = ""
         self._create_task_card._description_textfield.value = ""
+        self.page.update()
+
+    async def update_task(self, e):
+        ic("Updating Task")
+        task_id: int = self._update_task_card.data
+        task_data: UpdateTaskModel = self._update_task_card.return_data()
+        print(task_data)
+
+        if task_data.title and task_data.description and task_data.due_date:
+            response = await self.controller.update_task(
+                url=f"{Urls.update_task_url}/{task_id}", task_data=task_data
+            )
+            if response:
+                self.refresh_tasks()
+            self.page.overlay.remove(self._update_task_centered_container)
+            self.page.update()
+        else:
+            ic("All Field Are Required!")
         self.page.update()
 
     async def fetch_tasks(self):
@@ -125,8 +153,9 @@ class HomeView(ft.UserControl):
             TaskCard(
                 width=self.page.width,
                 background_color=Pallet.card_bg_color,
-                update_function=lambda _, task_id=task["id"]: print(
-                    f"Update {task_id}"
+                update_function=lambda _,
+                task_model=TaskResponseModel(**task): self.show_update_task_popup(
+                    task_model=task_model
                 ),
                 delete_function=lambda _, task_id=task["id"]: self.open_delete_dlg(
                     task_id=task_id
@@ -150,7 +179,7 @@ class HomeView(ft.UserControl):
         self.page.open(self.__delete_dialog)
 
     def show_create_task_popup(self, e):
-        self._centered_container = ft.Container(
+        self._create_task_centered_container = ft.Container(
             content=self._create_task_card,
             alignment=ft.alignment.center,
             expand=True,
@@ -159,7 +188,29 @@ class HomeView(ft.UserControl):
         if self.page.overlay:
             self.page.overlay.pop()
             self.page.update()
-        self.page.overlay.append(self._centered_container)
+        self.page.overlay.append(self._create_task_centered_container)
+
+        self.page.update()
+
+    def show_update_task_popup(self, task_model: TaskResponseModel):
+        self._update_task_card.data = task_model.id
+        formatted_date = ISO8601_to_std(task_model.due_date)
+        self._update_task_card._title_textfield.value = task_model.title
+        self._update_task_card._description_textfield.value = task_model.description
+        self._update_task_card._due_date_cal.value = task_model.due_date
+        self._update_task_card._due_date_text_field.value = formatted_date
+        self.page.update()
+
+        self._update_task_centered_container = ft.Container(
+            content=self._update_task_card,
+            alignment=ft.alignment.center,
+            expand=True,
+            bgcolor=ft.colors.with_opacity(0.7, ft.colors.BLACK),
+        )
+        if self.page.overlay:
+            self.page.overlay.pop()
+            self.page.update()
+        self.page.overlay.append(self._update_task_centered_container)
 
         self.page.update()
 
