@@ -19,7 +19,6 @@ async def main(page: ft.Page):
     history = []
 
     def route_change(event: ft.RouteChangeEvent):
-        # print("Route changed to: ", event.route)
         route = event.route
         if page.views:
             history.append(page.views[-1].route)

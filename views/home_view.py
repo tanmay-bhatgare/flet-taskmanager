@@ -94,7 +94,6 @@ class HomeView(ft.UserControl):
     async def create_task(self, e):
         ic("Creating Task")
         task_data: CreateTaskModel = self._create_task_card.return_data()
-        print(task_data)
 
         if task_data.title and task_data.description and task_data.due_date:
             response = await self.controller.create_task(
@@ -115,7 +114,6 @@ class HomeView(ft.UserControl):
         ic("Updating Task")
         task_id: int = self._update_task_card.data
         task_data: UpdateTaskModel = self._update_task_card.return_data()
-        print(task_data)
 
         if task_data.title and task_data.description and task_data.due_date:
             response = await self.controller.update_task(

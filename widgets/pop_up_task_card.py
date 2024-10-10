@@ -2,10 +2,13 @@ import datetime as dt
 from datetime import datetime
 from typing import Any, Callable, Literal
 import flet as ft
+from icecream import ic
 
 from constants.constants import Pallet, WidgetStyle
 from utils.date_converter import ISO8601_to_std, str_to_datetime
 from models.models import CreateTaskModel, UpdateTaskModel
+
+ic.configureOutput(prefix="Debug | ", includeContext=True)
 
 
 class PopUpTaskCard(ft.Container):
@@ -118,7 +121,7 @@ class PopUpTaskCard(ft.Container):
                                     height=40,
                                     on_click=submit_function
                                     if submit_function
-                                    else lambda _: print(self.return_data()),
+                                    else lambda _: ic(self.return_data()),
                                     style=WidgetStyle.action_button(
                                         bgcolor="#3b82f6",
                                         text_color="white",

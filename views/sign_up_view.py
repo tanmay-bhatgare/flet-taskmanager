@@ -242,6 +242,6 @@ class SignUpView(ft.UserControl):
     
     @staticmethod
     def clear_err_text(field: ft.TextField):
-        print("Clearing Error Text")
+        ic("Clearing Error Text")
         field.error_text = ""
         field.update()
