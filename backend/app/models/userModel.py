@@ -1,5 +1,4 @@
-import enum
-from sqlalchemy import Column, DateTime, Enum, Integer, String, Boolean, text
+from sqlalchemy import Column, DateTime, Integer, String, text
 from ..db.database import Base
 
 

@@ -102,7 +102,7 @@ class LoginView(ft.UserControl):
     def build(self):
         # Email and password fields
         self.email_field = ft.TextField(
-            value="t4@g.com",
+            value="t1@g.com",
             label="E-mail",
             hint_text="Enter your email",
             width=self.page.width * 0.9,

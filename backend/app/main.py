@@ -1,8 +1,14 @@
 from fastapi import FastAPI, status
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+
 from .utils.limiter import limiter
 from .routes import taskRoutes, authRoutes, userRoutes
+from .models import taskModel, userModel
+from .db.database import engine
+
+taskModel.Base.metadata.create_all(bind=engine)
+userModel.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 app.state.limiter = limiter

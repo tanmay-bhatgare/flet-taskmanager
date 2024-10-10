@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Depends, status, APIRouter
+from fastapi import HTTPException, Depends, Request, status, APIRouter
 from sqlalchemy.orm import Session
 from ..models import userModel
 from ..db.database import get_db
@@ -16,7 +16,9 @@ router = APIRouter(prefix="/users", tags=["User"])
     response_model=userSchema.UserResponse,
 )
 @limiter.limit("3/minute")
-def register_user(user: userSchema.CreateUser, db: Session = Depends(get_db)):
+def register_user(
+    request: Request, user: userSchema.CreateUser, db: Session = Depends(get_db)
+):
     existing_username = (
         db.query(userModel.User)
         .filter(userModel.User.username == user.username)

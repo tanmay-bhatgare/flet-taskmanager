@@ -167,4 +167,5 @@ class PopUpTaskCard(ft.Container):
                 due_date=due_date_iso,
                 is_private=True,  #! This Is hard coded value
                 is_completed=False,  #! This Is hard coded value
+                completed_at=None,
             )

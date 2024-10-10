@@ -18,7 +18,9 @@ router = APIRouter(tags=["Tasks"], prefix="/tasks")
 @limiter.limit("30/minute")
 #! Retrieve All Tasks
 def get_tasks(
-    db: Session = Depends(get_db), current_user: Session = Depends(get_current_user)
+    request: Request,
+    db: Session = Depends(get_db),
+    current_user: Session = Depends(get_current_user),
 ):
     if current_user is None:
         raise HTTPException(
@@ -66,6 +68,7 @@ def create_task(
 @limiter.limit("30/minute")
 #! Retrieve One Task By ID
 def get_task(
+    request: Request,
     id: int,
     db: Session = Depends(get_db),
     current_user: Session = Depends(get_current_user),
@@ -95,6 +98,7 @@ def get_task(
 @limiter.limit("30/minute")
 #! Delete Task By ID
 def delete_task(
+    request: Request,
     id: int,
     db: Session = Depends(get_db),
     current_user: Session = Depends(get_current_user),
@@ -131,6 +135,7 @@ def delete_task(
 @limiter.limit("30/minute")
 #! Update Task By ID
 def update_task(
+    request: Request,
     task: taskSchema.UpdateTask,
     id: int,
     db: Session = Depends(get_db),
