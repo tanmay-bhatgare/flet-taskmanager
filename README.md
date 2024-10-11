@@ -11,7 +11,7 @@
   - [Frontend Setup](#frontend-setup)
 - [Usage](#usage)
   - [Running the Backend](#running-the-backend)
-  - [Running the Frontend](#running-the-frontend)
+  - [Running the Frontend](#running-the-frontend) -[UI](#ui)
 - [Acknowledgments](#acknowledgments)
 
 ## Introduction
@@ -239,3 +239,17 @@ flet-taskmanager
 I would like to thank the following people for their contributions and support:
 
 - **[Feodor Fitsner](https://github.com/FeodorFitsner)** for introducing `Flet`, and simplifying frontend development for Python backend developers.
+
+## UI
+
+## Home View
+
+![Home View](/frontend/assets/home_view.jpg)
+
+## Sign In View
+
+![Home View](/frontend/assets/login_view.jpg)
+
+## Sign Up View
+
+![Home View](/frontend/assets/sign_up_view.jpg)
