@@ -101,14 +101,14 @@ class TaskController:
                 else:
                     ic(response.json())
                     return False
-        except httpx.HTTPStatusError:
-            ic("Unable to send request.")
+        except httpx.HTTPStatusError as e:
+            ic("Unable to send request.", e)
             return False
-        except httpx.RequestError:
-            ic("Request error occurred.")
+        except httpx.RequestError as e:
+            ic("Request error occurred.", e)
             return False
-        except Exception:
-            ic("An Error has occurred.")
+        except Exception as e:
+            ic("An Error has occurred.", e)
             return False
         finally:
             ic("Reached Finally")
