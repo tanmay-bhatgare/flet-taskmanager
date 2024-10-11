@@ -1,4 +1,4 @@
-# Flet Task Manager
+# Flet Task Manager (v1)
 
 ## Table of Contents
 
