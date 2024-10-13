@@ -1,4 +1,5 @@
 import math
+import time
 import flet as ft
 import pydantic
 from icecream import ic
@@ -30,6 +31,8 @@ class LoginView(ft.UserControl):
         )
 
     async def on_login_click(self, e):
+        #! Auto Logout Functionality
+        current_time = time.time()
         # Set every field to disabled
         ic("Login Function Triggered!!!")
 
@@ -63,6 +66,17 @@ class LoginView(ft.UserControl):
                         page=self.page,
                         key=SessionKey.is_logged_in,
                         value=True,
+                    )
+                    await async_set_session_value(
+                        page=self.page,
+                        key=SessionKey.login_timestamp,
+                        value=current_time,
+                    )
+                    ic(
+                        "Login Successful! At:",
+                        await async_get_session_value(
+                            page=self.page, key=SessionKey.login_timestamp
+                        ),
                     )
                 except Exception:
                     ic("Failed To Store Token")

@@ -16,7 +16,7 @@ router = APIRouter(tags=["Authentication"])
 @router.post(
     "/login", status_code=status.HTTP_200_OK, response_model=tokenSchema.TokenResponse
 )
-@limiter.limit("3/hour")
+@limiter.limit("30/minute")
 def login(
     request: Request,
     user_credentials: OAuth2PasswordRequestForm = Depends(),

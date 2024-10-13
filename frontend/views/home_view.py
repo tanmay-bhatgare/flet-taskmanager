@@ -14,12 +14,14 @@ from models.models import TaskResponseModel, UpdateTaskModel, CreateTaskModel
 ic.configureOutput(prefix="Debug | ", includeContext=True)
 
 
-class HomeView(ft.UserControl):
+class HomeView(ft.ListView):
     def __init__(self, page: ft.Page) -> None:
-        super().__init__()
+        super().__init__(spacing=10)  # Initialize the ListView directly
         self.page: ft.Page = page
         self.controller: TaskController | None = None
         self.tasks: list[dict] = []
+        
+        # Pop-up task cards for create and update operations
         self._create_task_card = PopUpTaskCard(
             type="create",
             width=self.page.width * 0.98,
@@ -33,6 +35,7 @@ class HomeView(ft.UserControl):
             submit_function=self.update_task,
         )
 
+        # Delete confirmation dialog
         self.__delete_dialog = ft.AlertDialog(
             modal=True,
             title=ft.Text("Confirm Delete"),
@@ -60,18 +63,14 @@ class HomeView(ft.UserControl):
             actions_alignment=ft.MainAxisAlignment.END,
             data=None,
         )
+
+        # Set the page's theme (scrollbar theme specifically)
         self.page.theme = ft.Theme(
             scrollbar_theme=ft.ScrollbarTheme(
-                track_color={
-                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
-                    ft.ControlState.HOVERED: ft.colors.TRANSPARENT,
-                },
+                track_color={ft.ControlState.DEFAULT: ft.colors.TRANSPARENT},
                 track_visibility=False,
                 thumb_visibility=False,
-                thumb_color={
-                    ft.ControlState.DEFAULT: ft.colors.TRANSPARENT,
-                    ft.ControlState.HOVERED: ft.colors.TRANSPARENT,
-                },
+                thumb_color={ft.ControlState.DEFAULT: ft.colors.TRANSPARENT},
             )
         )
 
@@ -99,7 +98,6 @@ class HomeView(ft.UserControl):
             response = await self.controller.create_task(
                 url=Urls.create_task_url, task_data=task_data
             )
-
             if response:
                 self.refresh_tasks()
             self.page.overlay.remove(self._create_task_centered_container)
@@ -124,7 +122,7 @@ class HomeView(ft.UserControl):
             self.page.overlay.remove(self._update_task_centered_container)
             self.page.update()
         else:
-            ic("All Field Are Required!")
+            ic("All Fields Are Required!")
         self.page.update()
 
     async def fetch_tasks(self):
@@ -141,13 +139,11 @@ class HomeView(ft.UserControl):
             self.update_list_view()
         else:
             ic("No Tasks Found")
-            self.__build_content.controls = [
-                ft.Text("No Tasks Found", color="red", size=20)
-            ]
-            self.__build_content.update()
+            self.controls = [ft.Text("No Tasks Found", color="red", size=20)]
+            self.update()
 
     def update_list_view(self):
-        self.__build_content.controls = [
+        self.controls = [
             TaskCard(
                 width=self.page.width,
                 background_color=Pallet.card_bg_color,
@@ -162,7 +158,7 @@ class HomeView(ft.UserControl):
             )
             for task in self.tasks
         ]
-        self.__build_content.update()
+        self.update()
 
     def refresh_tasks(self):
         ic("Refreshing Tasks")
@@ -172,9 +168,6 @@ class HomeView(ft.UserControl):
         ic("Control Mounted")
         future = self.page.run_task(self.fetch_tasks)
         future.add_done_callback(lambda f: ic(f.result()))
-
-    def open_dlg(self):
-        self.page.open(self.__delete_dialog)
 
     def show_create_task_popup(self, e):
         self._create_task_centered_container = ft.Container(
@@ -211,11 +204,3 @@ class HomeView(ft.UserControl):
         self.page.overlay.append(self._update_task_centered_container)
 
         self.page.update()
-
-    def build(self) -> ft.Control:
-        self.__build_content = ft.ListView(
-            controls=[],
-            spacing=10,
-        )
-
-        return self.__build_content

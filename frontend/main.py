@@ -1,12 +1,14 @@
 import warnings
 import flet as ft
 from icecream import ic
-
+import asyncio
 
 # from utils
 from utils.view_handler import view_handler
 from constants.constants import Routes, SessionKey
 from utils.session_storage_setter import async_get_session_value
+from utils.auto_logout import check_session_timeout
+
 
 warnings.filterwarnings("ignore")
 ic.configureOutput(prefix="Debug | ", includeContext=True)
@@ -51,6 +53,15 @@ async def main(page: ft.Page):
         page.go(Routes.home_route)
     else:
         page.go(Routes.login_route)
+
+    asyncio.create_task(
+        check_session_timeout(
+            page=page,
+            login_timestamp_key=SessionKey.login_timestamp,
+            is_logged_in_key=SessionKey.is_logged_in,
+            session_timeout_min=60,
+        )
+    )
 
 
 ft.app(target=main, assets_dir="./assets")
