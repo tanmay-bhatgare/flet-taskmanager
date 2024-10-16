@@ -15,7 +15,7 @@ router = APIRouter(prefix="/users", tags=["User"])
     status_code=status.HTTP_201_CREATED,
     response_model=userSchema.UserResponse,
 )
-@limiter.limit("3/minute")
+@limiter.limit("30/minute")
 def register_user(
     request: Request, user: userSchema.CreateUser, db: Session = Depends(get_db)
 ):

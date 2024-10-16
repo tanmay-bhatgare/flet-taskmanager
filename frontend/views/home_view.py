@@ -3,11 +3,11 @@ import flet as ft
 from icecream import ic
 
 from widgets.widgets import TaskCard, PopUpTaskCard
-from constants.constants import Pallet, Urls, SessionKey
+from constants.constants import CustomPalette, Urls, SessionKey
 from controllers.controllers import TaskController
 from utils.jwt_token_encoder import decrypt_jwt
 from utils.session_storage_setter import async_get_session_value
-from utils.date_converter import ISO8601_to_std
+from utils.date_handler import ISO8601_to_std
 from models.models import TaskResponseModel, UpdateTaskModel, CreateTaskModel
 
 
@@ -20,18 +20,27 @@ class HomeView(ft.ListView):
         self.page: ft.Page = page
         self.controller: TaskController | None = None
         self.tasks: list[dict] = []
-        
+
+        # Set the page's theme (scrollbar theme specifically)
+        self.page.theme = ft.Theme(
+            scrollbar_theme=ft.ScrollbarTheme(
+                track_color={ft.ControlState.DEFAULT: ft.colors.RED},
+                thumb_color={ft.ControlState.SCROLLED_UNDER: ft.colors.PURPLE},
+                track_visibility=False,
+                thumb_visibility=False,
+            )
+        )
         # Pop-up task cards for create and update operations
         self._create_task_card = PopUpTaskCard(
             type="create",
             width=self.page.width * 0.98,
-            background_color=Pallet.card_bg_color,
+            background_color=CustomPalette.card_bg_color,
             submit_function=self.create_task,
         )
         self._update_task_card = PopUpTaskCard(
             type="update",
             width=self.page.width * 0.98,
-            background_color=Pallet.card_bg_color,
+            background_color=CustomPalette.card_bg_color,
             submit_function=self.update_task,
         )
 
@@ -45,7 +54,7 @@ class HomeView(ft.ListView):
                     "Yes",
                     on_click=self.__handle_delete_yes,
                     style=ft.ButtonStyle(
-                        bgcolor=Pallet.transparent,
+                        bgcolor=CustomPalette.transparent,
                         shape=ft.RoundedRectangleBorder(5),
                         padding=ft.padding.symmetric(vertical=10, horizontal=14),
                     ),
@@ -54,7 +63,7 @@ class HomeView(ft.ListView):
                     "No",
                     on_click=self.__handle_delete_no,
                     style=ft.ButtonStyle(
-                        bgcolor=Pallet.transparent,
+                        bgcolor=CustomPalette.transparent,
                         shape=ft.RoundedRectangleBorder(5),
                         padding=ft.padding.symmetric(vertical=10, horizontal=14),
                     ),
@@ -62,16 +71,6 @@ class HomeView(ft.ListView):
             ],
             actions_alignment=ft.MainAxisAlignment.END,
             data=None,
-        )
-
-        # Set the page's theme (scrollbar theme specifically)
-        self.page.theme = ft.Theme(
-            scrollbar_theme=ft.ScrollbarTheme(
-                track_color={ft.ControlState.DEFAULT: ft.colors.TRANSPARENT},
-                track_visibility=False,
-                thumb_visibility=False,
-                thumb_color={ft.ControlState.DEFAULT: ft.colors.TRANSPARENT},
-            )
         )
 
     async def __handle_delete_yes(self, e):
@@ -146,15 +145,15 @@ class HomeView(ft.ListView):
         self.controls = [
             TaskCard(
                 width=self.page.width,
-                background_color=Pallet.card_bg_color,
+                background_color=CustomPalette.card_bg_color,
+                task_model=TaskResponseModel(**task),
                 update_function=lambda _,
-                task_model=TaskResponseModel(**task): self.show_update_task_popup(
-                    task_model=task_model
+                fucn_task_model=TaskResponseModel(**task): self.show_update_task_popup(
+                    task_model=fucn_task_model
                 ),
                 delete_function=lambda _, task_id=task["id"]: self.open_delete_dlg(
                     task_id=task_id
                 ),
-                **task,
             )
             for task in self.tasks
         ]

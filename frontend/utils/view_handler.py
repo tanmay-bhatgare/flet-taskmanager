@@ -1,5 +1,5 @@
 import flet as ft
-from constants.constants import Routes
+from constants.constants import Routes, TailWindColors
 from views.views import HomeView, LoginView, SignUpView
 
 
@@ -12,21 +12,32 @@ def view_handler(page: ft.Page):
             route=Routes.home_route,
             appbar=ft.AppBar(
                 leading=ft.Icon(name=ft.icons.TASK_ALT_SHARP),
-                leading_width=30,
+                # leading_width=30,
                 title=ft.Text("Task Manager", size=20, color=ft.colors.WHITE),
                 bgcolor="#2b2d42",
                 actions=[
                     ft.IconButton(
                         icon=ft.icons.REFRESH,
                         on_click=lambda _: home_view.refresh_tasks(),
+                        tooltip="Refresh Tasks",
+                    ),
+                    ft.PopupMenuButton(
+                        tooltip="Menu",
+                        menu_position=ft.PopupMenuPosition.UNDER,
+                        items=[
+                            ft.PopupMenuItem(
+                                icon=ft.icons.PERSON_OUTLINE_ROUNDED,
+                                text="Profile",
+                            ),
+                        ],
                     ),
                 ],
             ),
             floating_action_button=ft.FloatingActionButton(
                 icon=ft.icons.ADD,
                 on_click=home_view.show_create_task_popup,
-                bgcolor="#4f46e5",
-                foreground_color=ft.colors.WHITE,
+                bgcolor=TailWindColors.blue_600,
+                foreground_color=TailWindColors.slate_50,
             ),
             vertical_alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -49,7 +60,7 @@ def view_handler(page: ft.Page):
                 ),
                 title=ft.Text("Sign Up", size=20, color=ft.colors.WHITE),
                 automatically_imply_leading=True,
-                bgcolor="#2b2d42",
+                bgcolor="#14181B",
             ),
             vertical_alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -72,7 +83,7 @@ def view_handler(page: ft.Page):
                 ),
                 automatically_imply_leading=True,
                 title=ft.Text("Login", size=20, color=ft.colors.WHITE),
-                bgcolor="#2b2d42",
+                bgcolor=ft.colors.with_opacity(0.7, "#14181B"),
             ),
             vertical_alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,

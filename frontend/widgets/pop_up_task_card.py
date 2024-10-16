@@ -4,8 +4,8 @@ from typing import Any, Callable, Literal
 import flet as ft
 from icecream import ic
 
-from constants.constants import Pallet, WidgetStyle
-from utils.date_converter import ISO8601_to_std, str_to_datetime
+from constants.constants import CustomPalette, WidgetStyle
+from utils.date_handler import ISO8601_to_std, str_to_datetime
 from models.models import CreateTaskModel, UpdateTaskModel
 
 ic.configureOutput(prefix="Debug | ", includeContext=True)
@@ -45,8 +45,8 @@ class PopUpTaskCard(ft.Container):
         )
         self._title_textfield = ft.TextField(
             expand=True,
-            border_color=Pallet.transparent,
-            focused_border_color=Pallet.transparent,
+            border_color=CustomPalette.transparent,
+            focused_border_color=CustomPalette.transparent,
             hint_text="Task Title",
             filled=True,
             text_size=16,
@@ -59,11 +59,11 @@ class PopUpTaskCard(ft.Container):
             min_lines=5,
             multiline=True,
             hint_text="Task Description",
-            hint_style=ft.TextStyle(color=Pallet.slate_grey),
-            border_color=Pallet.transparent,
+            hint_style=ft.TextStyle(color=CustomPalette.slate_grey),
+            border_color=CustomPalette.transparent,
             border_radius=7,
             filled=True,
-            # hover_color=Pallet.transparent,
+            # hover_color=CustomPalette.transparent,
             autocorrect=True,
         )
 

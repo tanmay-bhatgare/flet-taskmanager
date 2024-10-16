@@ -30,6 +30,7 @@ class LoginController:
         except httpx.RequestError:
             ic("Request error occurred.")
             self.is_logged_in = False
+            raise
         except Exception:
             ic("An Error has occurred.")
             self.is_logged_in = False

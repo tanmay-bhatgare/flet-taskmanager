@@ -1,6 +1,9 @@
 from datetime import datetime
 from icecream import ic
 
+
+from constants.constants import TailWindColors
+
 ic.configureOutput(prefix="Debug | ", includeContext=True)
 
 
@@ -33,6 +36,32 @@ def str_to_datetime(date: str):
         return date
 
 
+def color_due_date(created_date: datetime, due_date: datetime) -> tuple[str, str]:
+    """
+    Converts Due-Date Control's color According to Time Remaining for task to be completed.
+
+    Args:
+        created_date (datetime): datetime object to be passed when task is created.
+        due_date (datetime): datetime object to be passed when task has due.
+
+    Returns:
+        tuple[str, str]: a color and message for flet control
+    """
+    days_passed = (due_date - created_date).days
+
+    if days_passed <= 0:
+        return TailWindColors.red_600, f"Days remaining: {days_passed}"
+    if days_passed <= 7:
+        return TailWindColors.orange_400, f"Days remaining: {days_passed}"
+    if days_passed <= 20:
+        return TailWindColors.yellow_300, f"Days remaining: {days_passed}"
+    if days_passed <= 30:
+        return TailWindColors.lime_300, f"Days remaining: {days_passed}"
+    else:
+        return TailWindColors.green_400, f"Days remaining: {days_passed}"
+
+
 if __name__ == "__main__":
     print(ISO8601_to_std(datetime.now()))
     print(str_to_datetime("24/07/07").isoformat())
+    print(color_due_date(datetime.now(), datetime(2024, 10, 31)))

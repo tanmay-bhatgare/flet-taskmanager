@@ -244,12 +244,12 @@ I would like to thank the following people for their contributions and support:
 
 ## Home View
 
-![Home View](/frontend/assets/home_view.jpg)
+![Home View](/frontend/assets/images/home_view.jpg)
 
 ## Sign In View
 
-![Home View](/frontend/assets/login_view.jpg)
+![Home View](/frontend/assets/images/login_view.jpg)
 
 ## Sign Up View
 
-![Home View](/frontend/assets/sign_up_view.jpg)
+![Home View](/frontend/assets/images/sign_up_view.jpg)

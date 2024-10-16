@@ -9,7 +9,7 @@ class SignUpController:
         self.has_signed_up = None
         self.error_message = ""
 
-    async def sign_up(self, data: SignUpModel)-> dict[str, str]:
+    async def sign_up(self, data: SignUpModel) -> dict[str, str]:
         try:
             async with httpx.AsyncClient() as client:
                 response = await client.post(
@@ -23,12 +23,14 @@ class SignUpController:
                 else:
                     self.has_signed_up = False
                     return response.json()
-        except httpx.HTTPStatusError:
-            ic("Unable to send request.")
+        except httpx.HTTPStatusError as e:
+            ic("Unable to get desired status.", e)
             self.has_signed_up = False
-        except httpx.RequestError:
-            ic("Request error occurred.")
+            raise
+        except httpx.RequestError as e:
+            ic("Request error occurred.", e)
             self.has_signed_up = False
+            raise
         except Exception:  # ? Base Exception Case
             ic("An Error has occurred.")
             self.has_signed_up = False

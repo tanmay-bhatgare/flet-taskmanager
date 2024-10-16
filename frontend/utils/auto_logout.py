@@ -19,9 +19,9 @@ async def check_session_timeout(
     ic("Checking Session Timeout Triggered")
     while True:
         # ic("In Session while loop")
+        is_logged_in = await page.client_storage.get_async(is_logged_in_key)
         login_timestamp = await page.client_storage.get_async(login_timestamp_key)
 
-        is_logged_in = await page.client_storage.get_async(is_logged_in_key)
 
         if login_timestamp is not None and is_logged_in:
             elapsed_time = time.time() - float(login_timestamp)
